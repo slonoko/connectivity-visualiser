@@ -1,0 +1,9 @@
+<div id="full_map"
+     leaflet 
+     [leafletOptions]="options"
+     (leafletMapReady)="onMapReady($event)">
+</div>
+
+<form method="POST" enctype="multipart/form-data" id="form_upload" action="/parse_csv" name="form_upload">
+    <input type="file" name="data_upload" (change)="onChange($event)" id="data_upload" accept=".csv" />
+</form>

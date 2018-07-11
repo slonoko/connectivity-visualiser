@@ -8,7 +8,7 @@ import { LeafletDirective } from '@asymmetrik/ngx-leaflet';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  private current_map:Map;
 
   options = {
     layers: [
@@ -42,7 +42,8 @@ export class AppComponent {
   }
 
   onMapReady(map: Map) {
-    map.addControl(this.uploadControl);
+    this.current_map = map;
+    this.current_map.addControl(this.uploadControl);
   }
 
   onChange(event:any) {

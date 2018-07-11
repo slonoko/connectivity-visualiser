@@ -12,7 +12,6 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent {
   private current_map: Map;
-
   options = {
     layers: [
       tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
@@ -53,10 +52,10 @@ export class AppComponent {
     this.current_map.addControl(this.uploadControl);
   }
 
+/*
   onChange(files: FileList) {
     this.postFile(files[0]);
   }
-  //
 
   postFile(fileToUpload: File) {
     const endpoint = 'http://localhost:8000/upload';
@@ -66,5 +65,28 @@ export class AppComponent {
       .post(endpoint, formData).subscribe((response)=>{
         console.info('ok');
       });
+  }*/
+
+  onFileSelect(input: HTMLInputElement) {
+
+    const files = input.files;
+
+   if (files && files.length) {
+       
+        console.log("Filename: " + files[0].name);
+        console.log("Type: " + files[0].type);
+        console.log("Size: " + files[0].size + " bytes");
+
+        const fileToRead = files[0];
+        let csvContent:any;
+
+        const fileReader = new FileReader();
+        fileReader.onload = function(fileLoadedEvent:any){
+          csvContent = fileLoadedEvent.target.result;
+        };
+
+        fileReader.readAsText(files[0], "UTF-8");
+   }
+
   }
 }

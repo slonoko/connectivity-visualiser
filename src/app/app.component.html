@@ -5,5 +5,5 @@
 </div>
 
 <form method="POST" enctype="multipart/form-data" id="form_upload" action="/parse_csv" name="form_upload">
-    <input type="file" name="data_upload" (change)="onFileSelect($event.target)" id="data_upload" accept=".csv" />
+    <input type="file" name="data_upload" (change)="onFileSelect($event.target)" [disabled]="disabledFileUpload" id="data_upload" accept=".csv" />
 </form>

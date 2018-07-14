@@ -22,9 +22,9 @@ export class AppComponent {
   private signalOverlay: LayerGroup = new LayerGroup();
 
   options = {
-    layers: [this.mapLayer
+    layers: [this.mapLayer,this.networkOverlay
     ],
-    zoom: 13,
+    zoom: 11,
     center: latLng(48.792053, 9.187813)
   };
 
@@ -104,7 +104,7 @@ export class AppComponent {
         csvContent = fileLoadedEvent.target.result;
         let csvLines = csvContent.split('\n');
         let prevCoords: any = {};
-        let prevColor = '';
+        let prevColor = [];
         let c: number = 0;
 
         let looper = setInterval(() => {
@@ -115,43 +115,58 @@ export class AppComponent {
           }
 
           if (c < csvLines.length) {
-            for (let i: number = ++c; i < csvLines.length && i - c < 500; i++) {
+            for (let i: number = c; i < csvLines.length && i - c < 500; i++) {
               let csvLine = csvLines[i];
               let csvTabs = csvLine.split('\t');
               let coords = { 'longitude': csvTabs[1], 'latitude': csvTabs[2] };
-              let color = 'red';
+              let net_color = 'red';
+              let signal_color = 'red';
 
-              /*if (csvTabs[4] == '3' || csvTabs[4] == '4') {
-                color = 'green';
+              if(c==0){
+                this.current_map.panTo(latLng(csvTabs[2], csvTabs[1]));
+                this.current_map.setZoom(11);
+              }
+
+              if (csvTabs[4] == '3' || csvTabs[4] == '4') {
+                signal_color = 'green';
               } else if (csvTabs[4] == '2') {
-                color = 'yellow';
-              }*/
+                signal_color = 'yellow';
+              }
 
               if (csvTabs[5] != undefined)
-                color = this.cellNetworkColor(csvTabs[5]);
+              net_color = this.cellNetworkColor(csvTabs[5]);
 
               if (prevCoords.longitude != undefined) {
-                if (coords.latitude != undefined) {
+                if (coords.latitude != undefined && prevCoords.longitude != coords.longitude && prevCoords.latitude != coords.latitude) {
                   let pointA = new LatLng(prevCoords.latitude, prevCoords.longitude);
                   let pointB = new LatLng(coords.latitude, coords.longitude);
                   let pointList = [pointA, pointB];
 
-                  let firstpolyline: Polyline = new Polyline(pointList, {
-                    color: prevColor,
+                  let netPolyline: Polyline = new Polyline(pointList, {
+                    color: prevColor[0],
                     weight: 7,
                     opacity: 0.7,
                     smoothFactor: 1,
                     noClip: true
                   });
-                  firstpolyline.addTo(this.networkOverlay);
+                  netPolyline.addTo(this.networkOverlay);
+
+                  let signalPolyline: Polyline = new Polyline(pointList, {
+                    color: prevColor[1],
+                    weight: 7,
+                    opacity: 0.7,
+                    smoothFactor: 1,
+                    noClip: true
+                  });
+                  signalPolyline.addTo(this.signalOverlay);
                 }
               } else {
                 this.current_map.options.center = new LatLng(coords.latitude, coords.longitude);
               }
-              prevColor = color;
+              prevColor = [net_color, signal_color];
               prevCoords = coords;
             }
-            c += 500;
+            c += 501;
           } else {
             this.uploadControl.getContainer().style.backgroundImage = 'url(/assets/upload.png)';
             this.uploadControl.getContainer().style.backgroundColor = 'white';

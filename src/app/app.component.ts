@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { latLng, tileLayer, DomUtil, Control, Map, LayerOptions, LatLng, Polyline } from 'leaflet';
+import { latLng, tileLayer, DomUtil, Control, Map, LayerOptions, LatLng, Polyline, TileLayer, circle, polygon, LayerGroup } from 'leaflet';
 import { LeafletDirective } from '@asymmetrik/ngx-leaflet';
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
@@ -15,14 +15,26 @@ export class AppComponent {
   private current_map: Map;
   private disabledFileUpload: boolean;
 
+  private mapLayer : TileLayer = tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieGVvbm9zIiwiYSI6ImNqamwwMzhpeTFhajMzbHNvZ2ZrbXB3Z3gifQ.BcuWxZHulkyQLRZwxe8ooA',
+  { maxZoom: 18, attribution: '...', id: 'mapbox.streets' });
+ 
+  private networkOverlay: LayerGroup = new LayerGroup();
+  private signalOverlay: LayerGroup = new LayerGroup();
+
   options = {
-    layers: [
-      tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
-        { maxZoom: 18, attribution: '...', id: 'mapbox.streets' })
+    layers: [this.mapLayer
     ],
     zoom: 13,
     center: latLng(48.792053, 9.187813)
   };
+
+  layersControl = {
+    overlays: {
+      'Network Coverage': this.networkOverlay,
+      'Signal Coverage': this.signalOverlay
+  
+    }
+  }
 
   uploadControl: Control = new Control({
     position: 'topleft'
@@ -48,6 +60,10 @@ export class AppComponent {
     };
 
 
+  }
+
+  onLayerActivated(event:any){
+    console.info("test");
   }
 
   onMapReady(map: Map) {
@@ -127,7 +143,7 @@ export class AppComponent {
                     smoothFactor: 1,
                     noClip: true
                   });
-                  firstpolyline.addTo(this.current_map);
+                  firstpolyline.addTo(this.networkOverlay);
                 }
               } else {
                 this.current_map.options.center = new LatLng(coords.latitude, coords.longitude);

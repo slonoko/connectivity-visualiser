@@ -16,7 +16,7 @@ export class AppComponent {
   private disabledFileUpload: boolean;
 
   private mapLayer : TileLayer = tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieGVvbm9zIiwiYSI6ImNqamwwMzhpeTFhajMzbHNvZ2ZrbXB3Z3gifQ.BcuWxZHulkyQLRZwxe8ooA',
-  { maxZoom: 18, attribution: '...', id: 'mapbox.streets' });
+  { maxZoom: 18, attribution: '...', id: 'mapbox.streets-basic' });
  
   private networkOverlay: LayerGroup = new LayerGroup();
   private signalOverlay: LayerGroup = new LayerGroup();
